@@ -176,7 +176,7 @@ class Predictor(BasePredictor):
         ).to("cuda")
         self.feature_extractor = CLIPImageProcessor.from_pretrained(FEATURE_EXTRACTOR)
 
-        if not os.path.exists(SDXL_MODEL_CACHE):
+        if not os.path.exists(f"{SDXL_MODEL_CACHE}/model_index.json"):
             download_weights(SDXL_URL, SDXL_MODEL_CACHE)
 
         controlnet_canny = ControlNetModel.from_pretrained(
