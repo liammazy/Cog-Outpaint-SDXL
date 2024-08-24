@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import time
+import tempfile
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from pget import pget_manifest
 
@@ -66,8 +67,23 @@ def download_weights(url, dest):
     start = time.time()
     print("downloading url: ", url)
     print("downloading to: ", dest)
-    subprocess.check_call(["pget", "-x", url, dest], close_fds=False)
-    print("downloading took: ", time.time() - start)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        subdir = os.path.join(tmpdirname, "dist")
+        os.makedirs(subdir, exist_ok=True)
+        
+        subprocess.check_call(["pget", "-x", url, subdir], close_fds=False)
+        
+        os.makedirs(dest, exist_ok=True)
+        
+        for item in os.listdir(subdir):
+            s = os.path.join(subdir, item)
+            d = os.path.join(dest, item)
+            if os.path.isdir(s):
+                shutil.copytree(s, d, dirs_exist_ok=True)
+            else:
+                shutil.copy2(s, d)
+                
+        print("downloading took: ", time.time() - start)
 
 
 class Predictor(BasePredictor):
