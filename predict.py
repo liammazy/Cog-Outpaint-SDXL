@@ -68,7 +68,7 @@ def download_weights(url, dest):
     print("downloading url: ", url)
     print("downloading to: ", dest)
     with tempfile.TemporaryDirectory() as tmpdirname:
-        subdir = os.path.join(tmpdirname, "dist")
+        subdir = os.path.join(tmpdirname, dest)
         os.makedirs(subdir, exist_ok=True)
         
         subprocess.check_call(["pget", "-x", url, subdir], close_fds=False)
